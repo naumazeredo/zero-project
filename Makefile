@@ -1,7 +1,7 @@
 EXEC = bin/zero
 
 CC = g++
-CC_FLAGS = -Wall
+CC_FLAGS = -Wall -std=c++11
 LD_FLAGS = -lsfml-window -lsfml-graphics -lsfml-system
 
 SOURCES = $(wildcard src/*.cpp)
