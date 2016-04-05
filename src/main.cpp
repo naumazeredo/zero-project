@@ -1,20 +1,25 @@
 #include <SFML/Graphics.hpp>
+#include "character.h"
 
 int main()
 {
   sf::RenderWindow window(sf::VideoMode(800, 600), "Project Zero");
 
+  Character character;
+
   while (window.isOpen()) {
-    // Event polling
+    // Input handling
     sf::Event event;
-    while (window.pollEvent(event)) {
+    if (window.pollEvent(event)) {
       if (event.type == sf::Event::Closed)
         window.close();
     }
-
-    window.clear(sf::Color::Black);
+    character.handleInputs();
 
     // Drawing
+    window.clear();
+
+    character.draw(window);
 
     window.display();
   }

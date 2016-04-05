@@ -1,23 +1,27 @@
-EXEC = bin/zero
+EXEC = zero.out
 
 CC = g++
 CC_FLAGS = -Wall -std=c++11
-LD_FLAGS = -lsfml-window -lsfml-graphics -lsfml-system
+LD_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(addprefix obj/,$(notdir $(SOURCES:.cpp=.o)))
 
+all: $(EXEC) run
+
 $(EXEC): $(OBJECTS)
-	@mkdir -p bin
 	$(CC) -o $@ $^ $(LD_FLAGS)
 
 obj/%.o: src/%.cpp
 	@mkdir -p obj
 	$(CC) $(CC_FLAGS) -c -o $@ $<
 
+
 .PHONY: clean run
 clean:
 	@rm -rf $(EXEC) obj
+
+rebuild: clean $(EXEC)
 
 run:
 	./$(EXEC)
