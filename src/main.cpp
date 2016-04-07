@@ -3,6 +3,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "types.h"
 #include "sprite.h"
 #include "texture.h"
 
@@ -12,6 +13,14 @@ const int SCREEN_HEIGHT = 600;
 bool isRunning;
 SDL_Window* window = nullptr;
 SDL_Renderer* renderer = nullptr;
+char title[32];
+
+u32 frameCount = 0;
+u32 frameTime = SDL_GetTicks();
+
+// Test
+i32 x = 100, y = 100;
+// ----
 
 bool startGame();
 void quitGame();
@@ -27,6 +36,8 @@ int main() {
   Sprite sprite = createSprite("assets/blank.png", {0, 0, 32, 32}, {0, 0});
   // ----
 
+  frameTime = SDL_GetTicks();
+
   isRunning = true;
   while (isRunning) {
     handleInput();
@@ -34,11 +45,20 @@ int main() {
     SDL_RenderClear(renderer);
 
     // Render
-    //SDL_RenderCopy(renderer, sprite.texture, &sprite.clip, 0);
-    renderSprite(&sprite, {10, 10});
+    renderSprite(&sprite, {x, y});
     // ------
 
     SDL_RenderPresent(renderer);
+
+    // Frames per second
+    frameCount++;
+    u32 curTime = SDL_GetTicks();
+    if (curTime - frameTime >= 1000) {
+      sprintf(title, "Zero Project - %d FPS", frameCount);
+      SDL_SetWindowTitle(window, title);
+      frameTime += 1000;
+      frameCount = 0;
+    }
   }
 
   // Test cleanup
@@ -51,6 +71,7 @@ int main() {
 }
 
 // -------------------------------
+// TODO(naum): Refactor into another file
 
 bool startGame() {
   if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -87,12 +108,13 @@ void quitGame() {
 
 void startWindow() {
   window = SDL_CreateWindow(
-    "Zero project",
+    "Zero Project",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
     SCREEN_WIDTH, SCREEN_HEIGHT, 0
   );
 
-  renderer = SDL_CreateRenderer(window, -1, 0);
+  renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+  //renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
 void destroyWindow() {
@@ -105,12 +127,23 @@ void destroyWindow() {
 
 
 void handleInput() {
+  // Keystate
+  const u8* keyState = SDL_GetKeyboardState(0);
+
+  if (keyState[SDL_SCANCODE_D]) x++;
+  if (keyState[SDL_SCANCODE_A]) x--;
+  if (keyState[SDL_SCANCODE_S]) y++;
+  if (keyState[SDL_SCANCODE_W]) y--;
+  // Events
+
   SDL_Event event;
   while (SDL_PollEvent(&event)) {
     if (event.type == SDL_QUIT) {
       isRunning = false;
     } else if (event.type == SDL_KEYDOWN) {
-      if (event.key.keysym.sym == SDLK_ESCAPE)
+      SDL_Keycode sym = event.key.keysym.sym;
+
+      if (sym == SDLK_ESCAPE)
         isRunning = false;
     }
   }
