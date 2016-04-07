@@ -2,7 +2,7 @@ EXEC = zero.out
 
 CC = g++
 CC_FLAGS = -Wall -std=c++11
-LD_FLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LD_FLAGS = -lSDL2
 
 SOURCES = $(wildcard src/*.cpp)
 OBJECTS = $(addprefix obj/,$(notdir $(SOURCES:.cpp=.o)))
