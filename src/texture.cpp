@@ -2,7 +2,7 @@
 #include <SDL2/SDL_image.h>
 #include "texture.h"
 
-extern SDL_Renderer* renderer;
+extern SDL_Renderer* g_renderer;
 
 SDL_Texture* loadTexture(const char* path) {
   SDL_Texture* texture = nullptr;
@@ -18,7 +18,7 @@ SDL_Texture* loadTexture(const char* path) {
     return nullptr;
   }
 
-  texture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
+  texture = SDL_CreateTextureFromSurface(g_renderer, loadedSurface);
   if (!texture) {
     SDL_LogError(
       SDL_LOG_CATEGORY_VIDEO,

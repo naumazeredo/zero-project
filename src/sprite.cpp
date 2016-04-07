@@ -1,7 +1,7 @@
 #include "texture.h"
 #include "sprite.h"
 
-extern SDL_Renderer* renderer;
+extern SDL_Renderer* g_renderer;
 
 Sprite createSprite(const char* texturePath, SDL_Rect clip, SDL_Point center) {
   return { loadTexture(texturePath), clip, center };
@@ -19,5 +19,5 @@ void renderSprite(const Sprite* sprite, SDL_Point position) {
     sprite->clip.h
   };
 
-  SDL_RenderCopy(renderer, sprite->texture, &sprite->clip, &dest);
+  SDL_RenderCopy(g_renderer, sprite->texture, &sprite->clip, &dest);
 }
