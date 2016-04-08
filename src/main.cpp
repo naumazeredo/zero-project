@@ -22,7 +22,8 @@ char title[32];
 
 Timer g_timer;
 u32 frameCount;
-u32 frameTime;
+u32 frameTimeLast;
+double frameTime;
 
 // Test
 i32 x = 100, y = 100;
@@ -43,10 +44,10 @@ int main() {
   // ----
 
   startTimer(&g_timer);
+  u32 previousTime = g_timer.currentTime;
 
-  // TODO(naum): Use cumulative moving average to calculate avg FPS
-  Timer localtimer;
-  startTimer(&localtimer);
+  frameTimeLast = g_timer.currentTime;
+  frameTime = 0.0f;
 
   isRunning = true;
   while (isRunning) {
@@ -64,10 +65,12 @@ int main() {
     updateTimer(&g_timer);
 
     frameCount++;
-    if (g_timer.currentTime - localtimer.currentTime >= 1000) {
-      sprintf(title, "Zero Project - %.2f FPS", 1000.0 * frameCount / g_timer.currentTime);
+    double frameTimeAlpha = 0.2;
+    frameTime = frameTimeAlpha * getDeltaTime() + (1 - frameTimeAlpha) * frameTime;
+    if (g_timer.currentTime - previousTime >= 200) {
+      sprintf(title, "Zero Project - %4.2f FPS", 1 / frameTime);
       SDL_SetWindowTitle(g_window, title);
-      updateTimer(&localtimer);
+      previousTime = g_timer.currentTime;
     }
   }
 
