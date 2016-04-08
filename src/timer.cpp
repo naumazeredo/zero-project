@@ -9,14 +9,21 @@ void startTimer(Timer* timer) {
   timer->isPaused = false;
 }
 
-void updateTimer(Timer* timer) {
-  if (timer->isPaused) return;
-
-  timer->previousTime = timer->currentTime;
-
+static void update(Timer* timer) {
   u32 t = SDL_GetTicks();
   timer->currentTime += t - timer->lastTickUpdate;
   timer->lastTickUpdate = t;
+}
+
+void updateTimer(Timer* timer) {
+  if (timer->isPaused) return;
+  timer->previousTime = timer->currentTime;
+  update(timer);
+}
+
+void inframeUpdateTimer(Timer* timer) {
+  if (timer->isPaused) return;
+  update(timer);
 }
 
 void pauseTimer(Timer* timer) {
@@ -28,7 +35,11 @@ void unpauseTimer(Timer* timer) {
   timer->lastTickUpdate = SDL_GetTicks();
 }
 
-double getDeltaTime(const Timer timer) {
+u32 getTimerDeltaTicks(const Timer timer) {
+  return timer.currentTime - timer.previousTime;
+}
+
+double getTimerDeltaTime(const Timer timer) {
   u32 delta = timer.currentTime - timer.previousTime;
   return delta / 1000.0;
 }

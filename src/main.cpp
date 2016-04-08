@@ -33,13 +33,15 @@ bool startGame();
 void quitGame();
 void startWindow();
 void destroyWindow();
+void limitFramesPerSecond(u32);
 
 void handleInput();
+
 
 int main() {
   startGame();
 
-  // Test
+  // Test startup
   Sprite sprite = createSprite("assets/blank.png", {0, 0, 32, 32}, {0, 0});
   // ----
 
@@ -51,11 +53,12 @@ int main() {
 
   isRunning = true;
   while (isRunning) {
+
     handleInput();
 
     SDL_RenderClear(g_renderer);
 
-    // Render
+    // Render test
     renderSprite(&sprite, {x, y});
     // ------
 
@@ -63,6 +66,8 @@ int main() {
 
     // Frames per second
     updateTimer(&g_timer);
+    limitFramesPerSecond(60);
+    inframeUpdateTimer(&g_timer);
 
     frameCount++;
     double frameTimeAlpha = 0.2;
@@ -162,4 +167,12 @@ void handleInput() {
       if (sym == SDLK_k) unpauseTimer(&g_timer);
     }
   }
+}
+
+void limitFramesPerSecond(u32 desiredFramesPerSecond) {
+  // TODO(naum): Improve limit fps algorithm
+  u32 frameTicks = getDeltaTicks();
+  const u32 ticksPerFrame = 1000 / desiredFramesPerSecond;
+  if (frameTicks <= ticksPerFrame)
+    SDL_Delay(ticksPerFrame - frameTicks);
 }

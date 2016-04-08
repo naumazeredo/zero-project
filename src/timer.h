@@ -12,9 +12,11 @@ struct Timer {
 
 void startTimer(Timer*);
 void updateTimer(Timer*);
+void inframeUpdateTimer(Timer*);
 void pauseTimer(Timer*);
 void unpauseTimer(Timer*);
 
-double getDeltaTime(const Timer);
+u32 getTimerDeltaTicks(const Timer);
+double getTimerDeltaTime(const Timer);
 
 #endif
