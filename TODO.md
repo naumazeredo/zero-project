@@ -9,6 +9,7 @@
   - [ ] Animated Sprite
   - [ ] Hierarchy structure
   - [ ] Z-depth order
+  - [ ] OpenGL rendering
 - [ ] Physics
 - [ ] Audio
 - [ ] Input handling
