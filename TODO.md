@@ -18,6 +18,7 @@
   - [ ] Mouse support
   - [ ] Joystick support
   - [ ] Key mapping
+- [ ] Networking
 - [ ] Texture container (future)
 
 ## Game
@@ -27,4 +28,5 @@
 
 ## Project
 
+- Add Emscripten to build for the Web
 - Change to CMake(?)
