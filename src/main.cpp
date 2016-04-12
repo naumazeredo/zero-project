@@ -8,6 +8,7 @@
 #include "timer.h"
 #include "sprite.h"
 #include "texture.h"
+#include "physicsobject.h"
 
 // TODO(naum): Refactor
 const int SCREEN_WIDTH = 800;
@@ -26,7 +27,7 @@ u32 frameTimeLast;
 double frameTime;
 
 // Test
-i32 x = 100, y = 100;
+PhysicsObject rigidbody {{0, 0}, {0, 0}};
 // ----
 
 bool startGame();
@@ -36,14 +37,14 @@ void destroyWindow();
 void limitFramesPerSecond(u32);
 
 void handleInput();
-
+void physicsUpdate();
 
 int main() {
   startGame();
 
-  // Test startup
+  /* XXX Test startup */
   Sprite sprite = createSprite("assets/blank.png", {0, 0, 32, 32}, {0, 0});
-  // ----
+  /* ---- */
 
   startTimer(&g_timer);
   u32 previousTime = g_timer.currentTime;
@@ -53,14 +54,17 @@ int main() {
 
   isRunning = true;
   while (isRunning) {
-
     handleInput();
+
+    /* XXX Physics test */
+    physicsUpdate();
+    /* ---------------- */
 
     SDL_RenderClear(g_renderer);
 
-    // Render test
-    renderSprite(&sprite, {x, y});
-    // ------
+    /* XXX Render test */
+    renderSprite(&sprite, vec2toPoint(rigidbody.position));
+    /* ----------- */
 
     SDL_RenderPresent(g_renderer);
 
@@ -79,9 +83,9 @@ int main() {
     }
   }
 
-  // Test cleanup
+  /* XXX Test cleanup */
   destroySprite(&sprite);
-  // ----
+  /* ------------ */
 
   quitGame();
 
@@ -143,15 +147,26 @@ void destroyWindow() {
   g_window = nullptr;
 }
 
+void limitFramesPerSecond(u32 desiredFramesPerSecond) {
+  // TODO(naum): Improve limit fps algorithm
+  u32 frameTicks = getDeltaTicks();
+  const u32 ticksPerFrame = 1000 / desiredFramesPerSecond;
+  if (frameTicks <= ticksPerFrame)
+    SDL_Delay(ticksPerFrame - frameTicks);
+}
+
+// ------------------------------------
 
 void handleInput() {
   // Keystate
   const u8* keyState = SDL_GetKeyboardState(0);
 
-  if (keyState[SDL_SCANCODE_D]) x++;
-  if (keyState[SDL_SCANCODE_A]) x--;
-  if (keyState[SDL_SCANCODE_S]) y++;
-  if (keyState[SDL_SCANCODE_W]) y--;
+  /* XXX Test */
+  if (keyState[SDL_SCANCODE_D]) rigidbody.velocity.x++;
+  if (keyState[SDL_SCANCODE_A]) rigidbody.velocity.x--;
+  if (keyState[SDL_SCANCODE_S]) rigidbody.velocity.y++;
+  if (keyState[SDL_SCANCODE_W]) rigidbody.velocity.y--;
+  /* ---- */
 
   // Events
   SDL_Event event;
@@ -169,10 +184,8 @@ void handleInput() {
   }
 }
 
-void limitFramesPerSecond(u32 desiredFramesPerSecond) {
-  // TODO(naum): Improve limit fps algorithm
-  u32 frameTicks = getDeltaTicks();
-  const u32 ticksPerFrame = 1000 / desiredFramesPerSecond;
-  if (frameTicks <= ticksPerFrame)
-    SDL_Delay(ticksPerFrame - frameTicks);
+void physicsUpdate() {
+  /* XXX Test */
+  updatePhysicsObject(&rigidbody);
+  /* ---- */
 }
