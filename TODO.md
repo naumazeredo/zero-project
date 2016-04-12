@@ -10,6 +10,9 @@
   - [ ] Hierarchy structure
   - [ ] Z-depth order
   - [ ] OpenGL rendering
+  - [ ] Text rendering
+    - [ ] TTF fonts
+    - [ ] Bitmap fonts
 - [ ] Physics
 - [ ] Audio
 - [ ] Input handling
