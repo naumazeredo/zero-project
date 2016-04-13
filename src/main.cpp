@@ -71,7 +71,6 @@ int main() {
     // Frames per second
     updateTimer(&g_timer);
     limitFramesPerSecond(60);
-    inframeUpdateTimer(&g_timer);
 
     frameCount++;
     double frameTimeAlpha = 0.2;
@@ -153,6 +152,7 @@ void limitFramesPerSecond(u32 desiredFramesPerSecond) {
   const u32 ticksPerFrame = 1000 / desiredFramesPerSecond;
   if (frameTicks <= ticksPerFrame)
     SDL_Delay(ticksPerFrame - frameTicks);
+  inframeUpdateTimer(&g_timer);
 }
 
 // ------------------------------------
