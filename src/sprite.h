@@ -1,17 +1,18 @@
 #ifndef ZERO_SPRITE_H
 #define ZERO_SPRITE_H
 
-#include <SDL2/SDL.h>
+#include "includes.h"
+#include "types.h"
 
 struct Sprite {
-  SDL_Texture* texture;
-  SDL_Rect clip;
-  SDL_Point center;
+  Texture* texture;
+  Rect clip;
+  Point center;
 };
 
-Sprite createSprite(const char* texturePath, SDL_Rect clip, SDL_Point center);
+Sprite createSprite(const char* texturePath, Rect clip, Point center);
 void destroySprite(Sprite* sprite);
 
-void renderSprite(const Sprite* sprite, SDL_Point position);
+void renderSprite(const Sprite& sprite, Point position);
 
 #endif

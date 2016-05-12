@@ -14,7 +14,12 @@
     - [ ] TTF fonts
     - [ ] Bitmap fonts
 - [ ] Physics
+  - [ ] AABB
+    - [ ] Collision Detection
+    - [ ] Collision Response
 - [ ] Audio
+  - [x] Basic Mixer
+  - [ ] Advanced Mixer
 - [ ] Input handling
   - [x] Basic keystate
   - [ ] Advanced keystate

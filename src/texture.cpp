@@ -1,5 +1,6 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+// TODO(naum): Change type to aliases
+
+#include "includes.h"
 #include "texture.h"
 
 extern SDL_Renderer* g_renderer;

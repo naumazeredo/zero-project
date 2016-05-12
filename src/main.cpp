@@ -1,14 +1,13 @@
 #include <cstdio>
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "includes.h"
 
-#include "globals.h"
 #include "types.h"
+#include "globals.h"
 #include "timer.h"
 #include "sprite.h"
 #include "texture.h"
-#include "physicsobject.h"
+#include "rigidbody.h"
 
 // TODO(naum): Refactor
 const int SCREEN_WIDTH = 800;
@@ -27,14 +26,21 @@ u32 frameTimeLast;
 double frameTime;
 
 // Test
-PhysicsObject rigidbody {{0, 0}, {0, 0}};
+Rigidbody rigidbody {{0, 0}, {0, 0}};
+
+Mix_Music* music = nullptr;
+Mix_Chunk* powerup = nullptr;
 // ----
 
 bool startGame();
 void quitGame();
-void startWindow();
-void destroyWindow();
+
+void startGraphics();
+void destroyGraphics();
 void limitFramesPerSecond(u32);
+
+void startMixer();
+void destroyMixer();
 
 void handleInput();
 void physicsUpdate();
@@ -43,7 +49,11 @@ int main() {
   startGame();
 
   /* XXX Test startup */
-  Sprite sprite = createSprite("assets/blank.png", {0, 0, 32, 32}, {0, 0});
+  Sprite sprite = createSprite("assets/gfx/blank.png", {0, 0, 32, 32}, {0, 0});
+  music = Mix_LoadMUS("assets/sfx/tetris.mp3");
+  powerup = Mix_LoadWAV("assets/sfx/powerup.wav");
+
+  //Mix_PlayMusic(music, -1);
   /* ---- */
 
   startTimer(&g_timer);
@@ -63,7 +73,7 @@ int main() {
     SDL_RenderClear(g_renderer);
 
     /* XXX Render test */
-    renderSprite(&sprite, vec2toPoint(rigidbody.position));
+    renderSprite(sprite, vec2toPoint(rigidbody.position));
     /* ----------- */
 
     SDL_RenderPresent(g_renderer);
@@ -83,6 +93,8 @@ int main() {
   }
 
   /* XXX Test cleanup */
+  Mix_FreeChunk(powerup);
+  Mix_FreeMusic(music);
   destroySprite(&sprite);
   /* ------------ */
 
@@ -95,7 +107,7 @@ int main() {
 // TODO(naum): Refactor into another file
 
 bool startGame() {
-  if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO) < 0) {
     SDL_LogError(
       SDL_LOG_CATEGORY_SYSTEM,
       "SDL_Init - SDL could not be initialized: %s\n",
@@ -105,6 +117,20 @@ bool startGame() {
     return false;
   }
 
+  startGraphics();
+  startMixer();
+
+  return true;
+}
+
+void quitGame() {
+  destroyMixer();
+  destroyGraphics();
+  IMG_Quit();
+  SDL_Quit();
+}
+
+void startGraphics() {
   int img_flags = IMG_INIT_PNG;
   if ((IMG_Init(img_flags) & img_flags) != img_flags) {
     SDL_LogError(
@@ -113,21 +139,9 @@ bool startGame() {
       IMG_GetError()
     );
 
-    return false;
+    // TODO(naum): Return on error
   }
 
-  startWindow();
-
-  return true;
-}
-
-void quitGame() {
-  destroyWindow();
-  IMG_Quit();
-  SDL_Quit();
-}
-
-void startWindow() {
   g_window = SDL_CreateWindow(
     "Zero Project",
     SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
@@ -138,7 +152,7 @@ void startWindow() {
   //g_renderer = SDL_CreateRenderer(g_window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 }
 
-void destroyWindow() {
+void destroyGraphics() {
   SDL_DestroyRenderer(g_renderer);
   SDL_DestroyWindow(g_window);
 
@@ -153,6 +167,22 @@ void limitFramesPerSecond(u32 desiredFramesPerSecond) {
   if (frameTicks <= ticksPerFrame)
     SDL_Delay(ticksPerFrame - frameTicks);
   inframeUpdateTimer(&g_timer);
+}
+
+void startMixer() {
+  if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+    SDL_LogError(
+      SDL_LOG_CATEGORY_SYSTEM,
+      "Mix_OpenAudio - Could not initialize mixer: %s\n",
+      Mix_GetError()
+    );
+
+    // TODO(naum): Return on error
+  }
+}
+
+void destroyMixer() {
+  Mix_CloseAudio();
 }
 
 // ------------------------------------
@@ -178,14 +208,18 @@ void handleInput() {
 
       if (sym == SDLK_ESCAPE)
         isRunning = false;
+
+      /* XXX Test */
       if (sym == SDLK_j) pauseTimer(&g_timer);
       if (sym == SDLK_k) unpauseTimer(&g_timer);
+      if (sym == SDLK_1) Mix_PlayChannel(-1, powerup, 0);
+      /* -------- */
     }
   }
 }
 
 void physicsUpdate() {
   /* XXX Test */
-  updatePhysicsObject(&rigidbody);
+  updateRigidbody(&rigidbody);
   /* ---- */
 }
